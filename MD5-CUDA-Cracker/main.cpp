@@ -89,6 +89,16 @@ int main(int argc, char* argv[])
 		.action([](const std::string& value) { return std::stoi(value); })
 		.default_value(8);
 
+	program.add_argument("--blocks")
+		.help("number of blocks in CUDA grid, 2048 if not supplied ")
+		.action([](const std::string& value) { return std::stoi(value); })
+		.default_value(2048);
+
+	program.add_argument("--threads")
+		.help("number of threads in CUDA block, 512 if not supplied ")
+		.action([](const std::string& value) { return std::stoi(value); })
+		.default_value(512);
+
 	try
 	{
 		program.parse_args(argc, argv);
@@ -104,18 +114,22 @@ int main(int argc, char* argv[])
 	uint* hash = program.get<uint*>("hash");
 	std::string alphabet = program.get<std::string>("alphabet");
 
-	int min_size = program.get<int>("--min");
-	int max_size = program.get<int>("--max");
+	int min_size = program.get<int>("--min"),
+		max_size = program.get<int>("--max"),
+		blocks = program.get<int>("--blocks"),
+		threads = program.get<int>("--threads");
 
 	std::cout << "Cracking hash " << std::hex << byteswap(hash[0]) << byteswap(hash[1]) << byteswap(hash[2]) << byteswap(hash[3]) << std::dec << std::endl
 		<< "with alphabet " << alphabet << std::endl
 		<< "alphabet length " << alphabet.length() << std::endl
 		<< "combination minimum size " << min_size << std::endl
-		<< "combination maximum size " << max_size << std::endl;
+		<< "combination maximum size " << max_size << std::endl
+		<< "blocks in CUDA grid " << blocks << std::endl
+		<< "threads in CUDA block " << threads << std::endl;
 
 	char* recovered = new char[max_size + 1];
 
-	float kernel_time = run_kernel(2048, 512, hash, alphabet.c_str(), alphabet.length(), min_size, max_size, recovered);
+	float kernel_time = run_kernel(blocks, threads, hash, alphabet.c_str(), alphabet.length(), min_size, max_size, recovered);
 
 	if (strlen(recovered) != 0)
 	{
