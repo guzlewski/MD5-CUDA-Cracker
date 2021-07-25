@@ -59,7 +59,7 @@ void validate_arguments(int min_size, int max_size)
 
 bool validate_result(uint hash[4], char* recovered)
 {
-	uint result[4] = {0};
+	uint result[4] = { 0 };
 	md5((uchar*)recovered, strlen(recovered), result);
 
 	return hash[0] == result[0] && hash[1] == result[1] && hash[2] == result[2] && hash[3] == result[3];

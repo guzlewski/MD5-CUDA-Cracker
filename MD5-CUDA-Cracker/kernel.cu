@@ -80,7 +80,7 @@ __device__ bool generate_next(uint* data, uint& current_size, uint jump, const u
 	return true;
 }
 
-float run_kernel(int blocks, int threads, const uint hash[4], const char* alphabet, const size_t alphabet_size, uint min_size, uint max_size, char *recovered)
+float run_kernel(int blocks, int threads, const uint hash[4], const char* alphabet, const size_t alphabet_size, uint min_size, uint max_size, char* recovered)
 {
 	cudaError_t cudaStatus;
 	uint* dev_hash;
